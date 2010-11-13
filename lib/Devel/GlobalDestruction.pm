@@ -5,20 +5,13 @@ package Devel::GlobalDestruction;
 use strict;
 use warnings;
 
-use vars qw($VERSION @ISA);
+use vars qw($VERSION);
 
-BEGIN {
-	$VERSION = '0.02';
+use XSLoader;
 
+$VERSION = '0.02';
 
-	if ( do { local $@; eval { require XSLoader; 1 } } ) {
-		__PACKAGE__->XSLoader::load($VERSION);
-	} else {
-		require DynaLoader;
-		push @ISA, 'DynaLoader';
-		__PACKAGE__->bootstrap($VERSION);
-	}
-}
+XSLoader::load(__PACKAGE__, $VERSION);
 
 use Sub::Exporter -setup => {
 	exports => [ qw(in_global_destruction) ],
