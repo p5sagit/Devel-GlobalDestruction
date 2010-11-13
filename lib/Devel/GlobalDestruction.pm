@@ -5,11 +5,9 @@ package Devel::GlobalDestruction;
 use strict;
 use warnings;
 
-use vars qw($VERSION);
-
 use XSLoader;
 
-$VERSION = '0.02';
+our $VERSION = '0.02';
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
