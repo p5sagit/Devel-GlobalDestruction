@@ -1,0 +1,6 @@
+0.03
+  * Drop the XS code on perl versions recent enough to have ${^GLOBAL_PHASE}.
+  * Drop code to support perls older than 5.6.  We've always been depending on
+    5.6 anyway.
+    + Use XSLoader without a fallback to DynaLoader.
+    + Use our instead of use vars.

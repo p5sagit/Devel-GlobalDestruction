@@ -7,7 +7,7 @@ use warnings;
 
 use XSLoader;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Sub::Exporter -setup => {
 	exports => [ qw(in_global_destruction) ],
@@ -75,9 +75,11 @@ This module is maintained using Darcs. You can get the latest version from
 L<http://nothingmuch.woobling.org/code>, and use C<darcs send> to commit
 changes.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
+
+Florian Ragwitz E<lt>rafl@debian.orgE<gt>
 
 =head1 COPYRIGHT
 
