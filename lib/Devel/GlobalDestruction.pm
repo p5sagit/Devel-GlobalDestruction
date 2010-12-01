@@ -9,12 +9,17 @@ use XSLoader;
 
 our $VERSION = '0.02';
 
-XSLoader::load(__PACKAGE__, $VERSION);
-
 use Sub::Exporter -setup => {
 	exports => [ qw(in_global_destruction) ],
 	groups  => { default => [ -all ] },
 };
+
+if ($] >= 5.013007) {
+    eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
+}
+else {
+    XSLoader::load(__PACKAGE__, $VERSION);
+}
 
 __PACKAGE__
 
