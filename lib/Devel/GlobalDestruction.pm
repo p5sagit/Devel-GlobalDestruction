@@ -29,7 +29,7 @@ __END__
 
 =head1 NAME
 
-Devel::GlobalDestruction - Expose PL_dirty, the flag which marks global
+Devel::GlobalDestruction - Expose the flag which marks global
 destruction.
 
 =head1 SYNOPSIS
@@ -65,7 +65,9 @@ This module uses L<Sub::Exporter> so the exports may be renamed, aliased, etc.
 
 =item in_global_destruction
 
-Returns the current value of C<PL_dirty>.
+Returns true if the interpreter is in global destruction. In perl 5.14+, this
+returns C<${^GLOBAL_PHASE} eq 'DESTRUCT'>, and on earlier perls, it returns the
+current value of C<PL_dirty>.
 
 =back
 
