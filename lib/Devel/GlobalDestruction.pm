@@ -14,7 +14,7 @@ use Sub::Exporter -setup => {
 	groups  => { default => [ -all ] },
 };
 
-if ($] >= 5.013007) {
+if (defined ${^GLOBAL_PHASE}) {
     eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
 }
 else {
