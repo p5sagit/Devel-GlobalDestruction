@@ -1,3 +1,11 @@
+0.04  Sun, 03 Jul 2011 11:28:51 +0200
+  * To detect a perl with ${^GLOBAL_PHASE}, check for the feature itself instead
+    of a specific perl version (doy).
+  * Update the documentation to reflect the use of ${^GLOBAL_PHASE} if available
+    (doy).
+  * Stop depending on Scope::Guard for the tests (doy).
+  * Upgrade ppport.h from version 3.13 to 3.19.
+
 0.03
   * Drop the XS code on perl versions recent enough to have ${^GLOBAL_PHASE}.
   * Drop code to support perls older than 5.6.  We've always been depending on

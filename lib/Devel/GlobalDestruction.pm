@@ -7,7 +7,7 @@ use warnings;
 
 use XSLoader;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Sub::Exporter -setup => {
 	exports => [ qw(in_global_destruction) ],
@@ -82,6 +82,8 @@ changes.
 Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
 
 Florian Ragwitz E<lt>rafl@debian.orgE<gt>
+
+Jesse Luehrs E<lt>doy@tozt.netE<gt>
 
 =head1 COPYRIGHT
 
