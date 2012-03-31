@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 use strict;
 use warnings;
 
@@ -29,5 +27,3 @@ ok( defined &in_global_destruction, "exported" );
 ok( !in_global_destruction(), "not in GD" );
 
 our $sg = Test::Scope::Guard->new(sub { ok( in_global_destruction(), "in GD" ) });
-
-
