@@ -2,7 +2,7 @@
 !.gitignore
 Makefile*
 !Makefile.PL
-*META.yml
+*META.*
 blib
 build
 inc
