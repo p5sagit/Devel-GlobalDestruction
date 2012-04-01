@@ -10,8 +10,8 @@ use XSLoader;
 our $VERSION = '0.04';
 
 use Sub::Exporter -setup => {
-	exports => [ qw(in_global_destruction) ],
-	groups  => { default => [ -all ] },
+    exports => [ qw(in_global_destruction) ],
+    groups  => { default => [ -all ] },
 };
 
 if (defined ${^GLOBAL_PHASE}) {
@@ -34,16 +34,16 @@ destruction.
 
 =head1 SYNOPSIS
 
-	package Foo;
-	use Devel::GlobalDestruction;
+    package Foo;
+    use Devel::GlobalDestruction;
 
-	use namespace::clean; # to avoid having an "in_global_destruction" method
+    use namespace::clean; # to avoid having an "in_global_destruction" method
 
-	sub DESTROY {
-		return if in_global_destruction;
+    sub DESTROY {
+        return if in_global_destruction;
 
-		do_something_a_little_tricky();
-	}
+        do_something_a_little_tricky();
+    }
 
 =head1 DESCRIPTION
 
@@ -87,9 +87,9 @@ Jesse Luehrs E<lt>doy@tozt.netE<gt>
 
 =head1 COPYRIGHT
 
-	Copyright (c) 2008 Yuval Kogman. All rights reserved
-	This program is free software; you can redistribute
-	it and/or modify it under the same terms as Perl itself.
+    Copyright (c) 2008 Yuval Kogman. All rights reserved
+    This program is free software; you can redistribute
+    it and/or modify it under the same terms as Perl itself.
 
 =cut
 

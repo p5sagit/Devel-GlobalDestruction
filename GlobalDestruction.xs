@@ -10,8 +10,8 @@ PROTOTYPES: ENABLE
 
 I32
 in_global_destruction()
-	PROTOTYPE:
-	CODE:
-		RETVAL = PL_dirty;
-	OUTPUT:
-		RETVAL
+   PROTOTYPE:
+   CODE:
+      RETVAL = PL_dirty;
+   OUTPUT:
+      RETVAL

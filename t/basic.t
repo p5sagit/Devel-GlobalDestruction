@@ -16,10 +16,10 @@ BEGIN {
 print "1..4\n";
 
 sub ok ($$) {
-	print "not " if !$_[0];
-	print "ok";
-	print " - $_[1]" if defined $_[1];
-	print "\n";
+    print "not " if !$_[0];
+    print "ok";
+    print " - $_[1]" if defined $_[1];
+    print "\n";
 }
 
 ok( eval "use Devel::GlobalDestruction; 1", "use Devel::GlobalDestruction" );
