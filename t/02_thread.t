@@ -17,6 +17,18 @@ use threads;
 use warnings;
 use strict;
 
+BEGIN {
+    if ($ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST}) {
+        require DynaLoader;
+        no warnings 'redefine';
+        my $orig = \&DynaLoader::bootstrap;
+        *DynaLoader::bootstrap = sub {
+            die 'no XS' if $_[0] eq 'Devel::GlobalDestruction';
+            goto $orig;
+        };
+    }
+}
+
 my $t = threads->create(sub { do 't/01_basic.t' });
 $t->join;
 

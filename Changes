@@ -1,3 +1,6 @@
+  * Pure-perl implementation for situations where neither ${^GLOBAL_PHASE} nor
+    XS are available
+
 0.04  Sun, 03 Jul 2011 11:28:51 +0200
   * To detect a perl with ${^GLOBAL_PHASE}, check for the feature itself instead
     of a specific perl version (doy).

@@ -1,9 +1,17 @@
 use strict;
 use warnings;
 
-# we need to run a test in GD and this fails
-# use Test::More tests => 3;
-# use ok 'Devel::GlobalDestruction';
+BEGIN {
+    if ($ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST}) {
+        require DynaLoader;
+        no warnings 'redefine';
+        my $orig = \&DynaLoader::bootstrap;
+        *DynaLoader::bootstrap = sub {
+            die 'no XS' if $_[0] eq 'Devel::GlobalDestruction';
+            goto $orig;
+        };
+    }
+}
 
 BEGIN {
     package Test::Scope::Guard;

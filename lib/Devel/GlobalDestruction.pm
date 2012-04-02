@@ -1,11 +1,7 @@
-#!/usr/bin/perl
-
 package Devel::GlobalDestruction;
 
 use strict;
 use warnings;
-
-use XSLoader;
 
 our $VERSION = '0.04';
 
@@ -17,15 +13,61 @@ use Sub::Exporter -setup => {
 if (defined ${^GLOBAL_PHASE}) {
     eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
 }
-else {
+elsif (eval {
+    require XSLoader;
     XSLoader::load(__PACKAGE__, $VERSION);
+    1;
+}) {
+    # the eval already installed everything, nothing to do
+}
+else {
+  eval <<'PP_IGD' or die $@;
+
+my ($in_global_destruction, $before_is_installed);
+
+sub in_global_destruction { $in_global_destruction }
+
+END {
+  # SpeedyCGI runs END blocks every cycle but somehow keeps object instances
+  # hence lying about it seems reasonable...ish
+  $in_global_destruction = 1 unless $CGI::SpeedyCGI::i_am_speedy;
 }
 
-__PACKAGE__
+# threads do not execute the global ENDs (it would be stupid). However
+# one can register a new END via simple string eval within a thread, and
+# achieve the same result. A logical place to do this would be CLONE, which
+# is claimed to run in the context of the new thread. However this does
+# not really seem to be the case - any END evaled in a CLONE is ignored :(
+# Hence blatantly hooking threads::create
+
+if ($INC{'threads.pm'}) {
+  my $orig_create = threads->can('create');
+  no warnings 'redefine';
+  *threads::create = sub {
+    { local $@; eval 'END { $in_global_destruction = 1 }' };
+    goto $orig_create;
+  };
+  $before_is_installed = 1;
+}
+
+# just in case threads got loaded after us (silly)
+sub CLONE {
+  unless ($before_is_installed) {
+    require Carp;
+    Carp::croak("You must load the 'threads' module before @{[ __PACKAGE__ ]}");
+  }
+}
+
+1;  # keep eval happy
+
+PP_IGD
+
+}
+
+1;  # keep require happy
+
 
 __END__
-
-=pod
 
 =head1 NAME
 
@@ -85,6 +127,8 @@ Florian Ragwitz E<lt>rafl@debian.orgE<gt>
 
 Jesse Luehrs E<lt>doy@tozt.netE<gt>
 
+Peter Rabbitson E<lt>ribasushi@cpan.orgE<gt>
+
 =head1 COPYRIGHT
 
     Copyright (c) 2008 Yuval Kogman. All rights reserved
@@ -92,5 +136,3 @@ Jesse Luehrs E<lt>doy@tozt.netE<gt>
     it and/or modify it under the same terms as Perl itself.
 
 =cut
-
-
