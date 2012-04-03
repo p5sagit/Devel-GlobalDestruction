@@ -5,7 +5,11 @@
 ,v$
 \B\.svn\b
 \B\.git\b
+\B\.gitignore\b
 \b_darcs\b
+
+# no mymeta
+\bMYMETA\.
 
 # Avoid Makemaker generated and utility files.
 \bMANIFEST\.bak
