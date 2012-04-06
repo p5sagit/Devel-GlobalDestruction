@@ -39,9 +39,9 @@ my %WriteMakefileArgs = (
   CONFIGURE_REQUIRES  => { 'ExtUtils::CBuilder' => 0.27 },
   META_ADD => {
     resources => {
-      homepage => 'http://search.cpan.org/dist/Devel-Globaldestruction',
-      repository => 'git://git.shadowcat.co.uk/p5sagit/Devel-Globaldestruction.git',
-      bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=Devel-Globaldestruction',
+      homepage => 'http://search.cpan.org/dist/Devel-GlobalDestruction',
+      repository => 'git://git.shadowcat.co.uk/p5sagit/Devel-GlobalDestruction.git',
+      bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=Devel-GlobalDestruction',
     },
     requires => \%RUN_DEPS,
   },

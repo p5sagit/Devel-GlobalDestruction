@@ -113,12 +113,6 @@ current value of C<PL_dirty>.
 
 =back
 
-=head1 VERSION CONTROL
-
-This module is maintained using Darcs. You can get the latest version from
-L<http://nothingmuch.woobling.org/code>, and use C<darcs send> to commit
-changes.
-
 =head1 AUTHORS
 
 Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
