@@ -10,9 +10,13 @@ use Sub::Exporter -setup => {
     groups  => { default => [ -all ] },
 };
 
+# we run 5.14+ - everything is in core
+#
 if (defined ${^GLOBAL_PHASE}) {
     eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
 }
+# try to load the xs version if it was compiled
+#
 elsif (eval {
     require XSLoader;
     XSLoader::load(__PACKAGE__, $VERSION);
@@ -20,6 +24,8 @@ elsif (eval {
 }) {
     # the eval already installed everything, nothing to do
 }
+# Not core nor XS
+#
 else {
 
   # SpeedyCGI runs END blocks every cycle but somehow keeps object instances
@@ -35,6 +41,12 @@ my ($in_global_destruction, $before_is_installed);
 
 sub in_global_destruction { $in_global_destruction }
 
+# This block will fire towards the end of the program execution
+# Since there is no way for us to generate an END which will execute *last*
+# this is *NOT 100% INCOMPATIBLE* with XS/${^GLOBAL_PHASE}. We *may* end up
+# with a true in_gloal_destruction() in the middle of another END block
+# There are no practical cases where this matters.
+#
 END {
   $in_global_destruction = 1;
 }
@@ -45,7 +57,7 @@ END {
 # is claimed to run in the context of the new thread. However this does
 # not really seem to be the case - any END evaled in a CLONE is ignored :(
 # Hence blatantly hooking threads::create
-
+#
 if ($INC{'threads.pm'}) {
   my $orig_create = threads->can('create');
   no warnings 'redefine';
