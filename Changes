@@ -1,3 +1,4 @@
+0.06  Thu, 14 Jun 2012
   * De-retardize XS-less behavior under SpeedyCGI
   * Test suite now works from within space-containing paths
 
