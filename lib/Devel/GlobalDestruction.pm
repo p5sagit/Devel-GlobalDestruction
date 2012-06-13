@@ -21,6 +21,14 @@ elsif (eval {
     # the eval already installed everything, nothing to do
 }
 else {
+
+  # SpeedyCGI runs END blocks every cycle but somehow keeps object instances
+  # hence DIAF
+  die("The pure-perl version of @{[__PACKAGE__]} can not function correctly under CGI::SpeedyCGI. "
+    . "Please ensure you have a working compiler, and reinstall @{[__PACKAGE__]} to enable the XS "
+    . "codepath.\n"
+  ) if $CGI::SpeedyCGI::i_am_speedy;
+
   eval <<'PP_IGD' or die $@;
 
 my ($in_global_destruction, $before_is_installed);
@@ -28,9 +36,7 @@ my ($in_global_destruction, $before_is_installed);
 sub in_global_destruction { $in_global_destruction }
 
 END {
-  # SpeedyCGI runs END blocks every cycle but somehow keeps object instances
-  # hence lying about it seems reasonable...ish
-  $in_global_destruction = 1 unless $CGI::SpeedyCGI::i_am_speedy;
+  $in_global_destruction = 1;
 }
 
 # threads do not execute the global ENDs (it would be stupid). However
