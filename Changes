@@ -1,4 +1,5 @@
   * De-retardize XS-less behavior under SpeedyCGI
+  * Test suite now works from within space-containing paths
 
 0.05  Thu, 26 Apr 2012
   * Pure-perl implementation for situations where neither ${^GLOBAL_PHASE} nor
