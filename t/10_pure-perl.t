@@ -16,8 +16,10 @@ my $this_file = quotemeta(__FILE__);
 my @tests = grep { $_ !~ /${this_file}$/ } bsd_glob("$Bin/*.t");
 print "1..@{[ scalar @tests ]}\n";
 
+my $had_error = 0;
+END { $? = $had_error }
 sub ok ($$) {
-  print "not " if !$_[0];
+  $had_error++, print "not " if !$_[0];
   print "ok";
   print " - $_[1]" if defined $_[1];
   print "\n";
@@ -36,4 +38,3 @@ for my $fn (@tests) {
   wait;
   ok (! $?, "Exit $? from: $^X $fn");
 }
-

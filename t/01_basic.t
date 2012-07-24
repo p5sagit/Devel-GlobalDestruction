@@ -21,8 +21,10 @@ BEGIN {
 
 print "1..4\n";
 
+my $had_error = 0;
+END { $? = $had_error };
 sub ok ($$) {
-    print "not " if !$_[0];
+    $had_error++, print "not " if !$_[0];
     print "ok";
     print " - $_[1]" if defined $_[1];
     print "\n";
