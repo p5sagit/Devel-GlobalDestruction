@@ -39,7 +39,7 @@ else {
 
 my ($in_global_destruction, $before_is_installed);
 
-sub in_global_destruction { $in_global_destruction }
+sub in_global_destruction () { $in_global_destruction }
 
 # This block will fire towards the end of the program execution
 # Since there is no way for us to generate an END which will execute *last*

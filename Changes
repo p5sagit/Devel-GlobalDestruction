@@ -1,4 +1,5 @@
   * Actually detect errors in pure-perl test
+  * Add prototype to pure-perl pre-5.14 version
 
 0.06  Thu, 14 Jun 2012
   * De-retardize XS-less behavior under SpeedyCGI
