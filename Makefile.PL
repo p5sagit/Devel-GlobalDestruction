@@ -25,7 +25,7 @@ my $mymeta = $mymeta_works || eval { ExtUtils::MakeMaker->VERSION('6.5702'); 1 }
 my %META_BITS = (
 );
 my %RUN_DEPS = (
-  'Sub::Exporter' => 0,
+  'Sub::Exporter::Progressive' => 0.001002,
 );
 
 my %WriteMakefileArgs = (

@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION = '0.07';
 
-use Sub::Exporter -setup => {
+use Sub::Exporter::Progressive -setup => {
     exports => [ qw(in_global_destruction) ],
     groups  => { default => [ -all ] },
 };
@@ -119,7 +119,8 @@ destruction is in effect.
 
 =head1 EXPORTS
 
-This module uses L<Sub::Exporter> so the exports may be renamed, aliased, etc.
+This module uses L<Sub::Exporter::Progressive> so the exports may be renamed,
+aliased, etc. if L<Sub::Exporter> is present.
 
 =over 4
 
@@ -140,6 +141,8 @@ Florian Ragwitz E<lt>rafl@debian.orgE<gt>
 Jesse Luehrs E<lt>doy@tozt.netE<gt>
 
 Peter Rabbitson E<lt>ribasushi@cpan.orgE<gt>
+
+Arthur Axel 'fREW' Schmidt E<lt>frioux@gmail.comE<gt>
 
 =head1 COPYRIGHT
 
