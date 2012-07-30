@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-require 5.006000;
+require 5.008001;
 
 use ExtUtils::MakeMaker;
 BEGIN { if ( $^O eq 'cygwin' ) {
@@ -34,7 +34,7 @@ my %WriteMakefileArgs = (
   LICENSE             => 'perl',
   INSTALLDIRS         => 'site',
   PL_FILES            => { },
-  MIN_PERL_VERSION    => '5.006000',
+  MIN_PERL_VERSION    => '5.008001',
   PREREQ_PM           => \%RUN_DEPS,
   CONFIGURE_REQUIRES  => { 'ExtUtils::CBuilder' => 0.27 },
   META_ADD => {

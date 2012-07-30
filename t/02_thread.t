@@ -14,8 +14,13 @@ BEGIN {
 }
 
 use threads;
-use warnings;
+use threads::shared;
+
+our $had_error :shared;
+END { $? = $had_error||0 }
+
 use strict;
+use warnings;
 
 BEGIN {
   if ($ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST}) {
@@ -29,7 +34,22 @@ BEGIN {
   }
 }
 
-my $t = threads->create(sub { do 't/01_basic.t' });
-$t->join;
+# load it before spawning a thread, that's the whole point
+require Devel::GlobalDestruction;
 
-exit 0;
+sub do_test {
+
+  # just die so we don't need to deal with testcount skew
+  unless ( ($_[0]||'') eq 'arg' ) {
+    $had_error++;
+    die "Argument passing failed!";
+  }
+
+  delete $INC{'t/01_basic.t'};
+  do 't/01_basic.t';
+
+  1;
+}
+
+threads->create('do_test', 'arg')->join
+  or $had_error++;
