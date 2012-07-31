@@ -6,36 +6,38 @@ use warnings;
 our $VERSION = '0.08';
 
 use Sub::Exporter::Progressive -setup => {
-    exports => [ qw(in_global_destruction) ],
-    groups  => { default => [ -all ] },
+  exports => [ qw(in_global_destruction) ],
+  groups  => { default => [ -all ] },
 };
 
 # we run 5.14+ - everything is in core
 #
 if (defined ${^GLOBAL_PHASE}) {
-    eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
+  eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
 }
 # try to load the xs version if it was compiled
 #
 elsif (eval {
-    require XSLoader;
-    XSLoader::load(__PACKAGE__, $VERSION);
-    1;
+  require XSLoader;
+  XSLoader::load(__PACKAGE__, $VERSION);
+  1;
 }) {
-    # the eval already installed everything, nothing to do
+  # the eval already installed everything, nothing to do
 }
 # Not core nor XS
+# The whole thing is in an eval to prevent perl from parsing it in the
+# first place under perls where none of this is needed
 #
 else {
-
-  # SpeedyCGI runs END blocks every cycle but somehow keeps object instances
-  # hence DIAF
-  die("The pure-perl version of @{[__PACKAGE__]} can not function correctly under CGI::SpeedyCGI. "
-    . "Please ensure you have a working compiler, and reinstall @{[__PACKAGE__]} to enable the XS "
-    . "codepath.\n"
-  ) if $CGI::SpeedyCGI::i_am_speedy;
-
   eval <<'PP_IGD' or die $@;
+
+# SpeedyCGI runs END blocks every cycle but somehow keeps object instances
+# hence DIAF
+die("The pure-perl version of @{[__PACKAGE__]} can not function correctly under CGI::SpeedyCGI. "
+  . "Please ensure you have a working compiler, and reinstall @{[__PACKAGE__]} to enable the XS "
+  . "codepath.\n"
+) if $CGI::SpeedyCGI::i_am_speedy;
+
 
 my ($in_global_destruction, $before_is_installed);
 
