@@ -57,19 +57,36 @@ my $add_endblock = sub {
 END { $add_endblock->() }
 
 # threads do not execute the global ENDs (it would be stupid). However
-# one can register a new END via simple string eval within a thread, and
+# one can register a new thread-local END from within a thread, and
 # achieve the same result. A logical place to do this would be CLONE, which
 # is claimed to run in the context of the new thread. However this does
-# not really seem to be the case - any END evaled in a CLONE is ignored :(
+# not really seem to be the case - any END inserted in a CLONE is ignored :(
 # Hence blatantly hooking threads::create
 #
 if ($INC{'threads.pm'}) {
+  require Scalar::Util;
+
   my $orig_create = threads->can('create');
   no warnings 'redefine';
+
   *threads::create = sub {
-    { local $@; eval 'END { $in_global_destruction = 1 }' };
+    my $class = shift;
+    my $target = shift;
+
+    unless ( (Scalar::Util::reftype($target)||'') eq 'CODE' ) {
+      no strict 'refs';
+      $target = \&{ caller() . "::$target" };
+    }
+
+    @_ = (
+      $class,
+      sub { $add_endblock->(); goto $target },
+      @_,
+    );
+
     goto $orig_create;
   };
+
   $before_is_installed = 1;
 }
 
