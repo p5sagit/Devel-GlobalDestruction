@@ -3,13 +3,19 @@ use warnings;
 
 BEGIN {
   if ($ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST}) {
-    require DynaLoader;
+    no strict 'refs';
     no warnings 'redefine';
-    my $orig = \&DynaLoader::bootstrap;
-    *DynaLoader::bootstrap = sub {
-      die 'no XS' if $_[0] eq 'Devel::GlobalDestruction';
-      goto $orig;
-    };
+
+    for my $f (qw(DynaLoader::bootstrap XSLoader::load)) {
+      my ($mod) = $f =~ /^ (.+) \:\: [^:]+ $/x;
+      eval "require $mod" or die $@;
+
+      my $orig = \&$f;
+      *$f = sub {
+        die 'no XS' if ($_[0]||'') eq 'Devel::GlobalDestruction';
+        goto $orig;
+      };
+    }
   }
 }
 
