@@ -1,3 +1,5 @@
+  * Fix pure-perl implementation incorrectly reporting GD during END phase
+
 0.08  Tue, 31 Jul 2012
   * Switch to Sub::Exporter::Progressive
 

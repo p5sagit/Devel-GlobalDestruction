@@ -25,7 +25,7 @@ BEGIN {
   sub DESTROY { my $self = shift; $self->[0]->() }
 }
 
-print "1..6\n";
+print "1..9\n";
 
 our $had_error;
 
@@ -58,6 +58,10 @@ sub ok ($$) {
   print "\n";
 }
 
+END {
+  ok( ! in_global_destruction(), 'Not yet in GD while in END block 2' )
+}
+
 ok( eval "use Devel::GlobalDestruction; 1", "use Devel::GlobalDestruction" );
 
 ok( defined &in_global_destruction, "exported" );
@@ -66,6 +70,13 @@ ok( defined prototype \&in_global_destruction, "defined prototype" );
 
 ok( prototype \&in_global_destruction eq "", "empty prototype" );
 
-ok( !in_global_destruction(), "not in GD" );
+ok( ! in_global_destruction(), "Runtime is not GD" );
 
-our $sg = Test::Scope::Guard->new(sub { ok( in_global_destruction(), "in GD" ) });
+our $sg1 = Test::Scope::Guard->new(sub { ok( in_global_destruction(), "Final cleanup object destruction properly in GD" ) });
+
+END {
+  ok( ! in_global_destruction(), 'Not yet in GD while in END block 1' )
+}
+
+our $sg2 = Test::Scope::Guard->new(sub { ok( ! in_global_destruction(), "Object destruction in END not considered GD" ) });
+END { undef $sg2 }

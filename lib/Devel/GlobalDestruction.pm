@@ -38,20 +38,23 @@ die("The pure-perl version of @{[__PACKAGE__]} can not function correctly under 
   . "codepath.\n"
 ) if $CGI::SpeedyCGI::i_am_speedy;
 
-
 my ($in_global_destruction, $before_is_installed);
 
 sub in_global_destruction () { $in_global_destruction }
 
+# end_av trick suggested by liz++
+require B;
+my $add_endblock = sub {
+  push @{ B::end_av()->object_2svref }, sub { $in_global_destruction = 1 };
+};
+
 # This block will fire towards the end of the program execution
-# Since there is no way for us to generate an END which will execute *last*
-# this is *NOT 100% INCOMPATIBLE* with XS/${^GLOBAL_PHASE}. We *may* end up
-# with a true in_gloal_destruction() in the middle of another END block
-# There are no practical cases where this matters.
+# Use it to inject an END block which is guaranteed to run last
+# (as long as something else doesn't inject yet another block in
+# the same manner afterwards, at which point it hardly matters
+# anyway)
 #
-END {
-  $in_global_destruction = 1;
-}
+END { $add_endblock->() }
 
 # threads do not execute the global ENDs (it would be stupid). However
 # one can register a new END via simple string eval within a thread, and
@@ -145,6 +148,8 @@ Jesse Luehrs E<lt>doy@tozt.netE<gt>
 Peter Rabbitson E<lt>ribasushi@cpan.orgE<gt>
 
 Arthur Axel 'fREW' Schmidt E<lt>frioux@gmail.comE<gt>
+
+Elizabeth Mattijsen E<lt>liz@dijkmat.nlE<gt>
 
 =head1 COPYRIGHT
 
