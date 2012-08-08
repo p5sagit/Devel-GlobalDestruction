@@ -1,3 +1,4 @@
+0.09  Wed, 08 Aug 2012
   * Rewrite completely broken pure-perl GD detection under threads
   * Fix pure-perl implementation incorrectly reporting GD during END phase
 
