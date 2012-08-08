@@ -81,7 +81,15 @@ if ($INC{'threads.pm'}) {
 
     @_ = (
       $class,
-      sub { $add_endblock->(); goto $target },
+      sub {
+        # Perls compiled with THREADS_HAVE_PIDS do not copy end_av properly
+        # between threads, so B::end_av ends up returning a B::SPECIAL and it
+        # goes downhill from there
+        # Install a noop END just to be on the safe side
+        { local $@; eval 'END {}' }
+        $add_endblock->();
+        goto $target
+      },
       @_,
     );
 
