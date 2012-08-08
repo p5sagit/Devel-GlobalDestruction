@@ -13,7 +13,8 @@ use Sub::Exporter::Progressive -setup => {
 # we run 5.14+ - everything is in core
 #
 if (defined ${^GLOBAL_PHASE}) {
-  eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }';
+  eval 'sub in_global_destruction () { ${^GLOBAL_PHASE} eq q[DESTRUCT] }; 1'
+    or die $@;
 }
 # try to load the xs version if it was compiled
 #
