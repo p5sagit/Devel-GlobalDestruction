@@ -25,6 +25,33 @@ elsif (eval {
 }) {
   # the eval already installed everything, nothing to do
 }
+# We need pure-perl and we are running under -c
+# None of the END-block trickery will work, use a global scope guard instead,
+# as it is more than adequate in this situation
+# The whole thing is in an eval to prevent perl from parsing it in the
+# first place where none of this is needed
+#
+elsif ($^C) {
+  eval <<'PP_IGD' or die $@;
+
+  my $in_global_destruction;
+
+  sub in_global_destruction () { $in_global_destruction }
+
+  {
+    package Devel::GlobalDestgruction::_MinusC::ScopeGuard;
+    sub DESTROY { shift->[0]->() };
+  }
+
+  no warnings 'once';
+  $Devel::GlobalDestgruction::_MinusC::guard = bless [sub {
+    $in_global_destruction = 1;
+  }], 'Devel::GlobalDestgruction::_MinusC::ScopeGuard';
+
+  1; # keep eval happy
+
+PP_IGD
+}
 # Not core nor XS
 # The whole thing is in an eval to prevent perl from parsing it in the
 # first place under perls where none of this is needed
