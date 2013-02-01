@@ -26,6 +26,8 @@ elsif (eval {
   # the eval already installed everything, nothing to do
 }
 else {
+  # internally, PL_main_start is nulled immediately before entering global destruction
+  # and we can use B to detect that
   require B;
   eval 'sub in_global_destruction () { B::main_start()->isa(q[B::NULL]) }; 1'
     or die $@;
