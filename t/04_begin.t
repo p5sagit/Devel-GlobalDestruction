@@ -33,26 +33,16 @@ sub ok ($$) {
   !!$_[0]
 }
 
-BEGIN {
-  require B;
-  B::minus_c();
-
-  print "1..3\n";
-  ok( $^C, "Test properly running under minus-c" );
-}
-
 use Devel::GlobalDestruction;
 
 BEGIN {
-    ok !in_global_destruction(), "BEGIN is not GD with -c";
-}
-
-our $foo;
-BEGIN {
-  $foo = Test::Scope::Guard->new( sub {
-    ok( in_global_destruction(), "Final cleanup object destruction properly in GD" ) or do {
+  print "1..2\n";
+  ok !in_global_destruction(), "BEGIN is not GD";
+  my $foo = Test::Scope::Guard->new( sub {
+    ok( !in_global_destruction(), "DESTROY in BEGIN still not GD" ) or do {
       require POSIX;
       POSIX::_exit(1);
     };
   });
 }
+

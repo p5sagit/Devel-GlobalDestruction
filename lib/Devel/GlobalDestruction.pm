@@ -27,9 +27,15 @@ elsif (eval {
 }
 else {
   # internally, PL_main_start is nulled immediately before entering global destruction
-  # and we can use B to detect that
+  # and we can use B to detect that.  It will also be null before the main runloop starts,
+  # so we check install a CHECK if needed to detect that.
   require B;
-  eval 'sub in_global_destruction () { B::main_start()->isa(q[B::NULL]) }; 1'
+  my $started = !B::main_start()->isa(q[B::NULL]);
+  unless ($started) {
+    eval 'CHECK { $started = 1 }; 1'
+      or die $@;
+  }
+  eval 'sub in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
     or die $@;
 }
 
