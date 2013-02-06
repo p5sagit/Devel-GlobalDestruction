@@ -49,7 +49,7 @@ BEGIN {
 use threads;
 use threads::shared;
 
-print "1..3\n";
+print "1..4\n";
 
 our $had_error :shared;
 END { $? = $had_error||0 }
@@ -66,6 +66,9 @@ use Devel::GlobalDestruction;
 
 our $cloner = Test::Thread::Clone->new(sub {
     ok( ! in_global_destruction(), "CLONE is not GD" );
+    my $guard = Test::Scope::Guard->new(sub {
+        ok( ! in_global_destruction(), "DESTROY during CLONE is not GD");
+    });
 });
 our $global = Test::Scope::Guard->new(sub {
     ok( in_global_destruction(), "Final cleanup object destruction properly in GD in " . (threads->tid ? 'thread' : 'main program') );
