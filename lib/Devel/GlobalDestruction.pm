@@ -103,6 +103,8 @@ Arthur Axel 'fREW' Schmidt E<lt>frioux@gmail.comE<gt>
 
 Elizabeth Mattijsen E<lt>liz@dijkmat.nlE<gt>
 
+Greham Knop E<lt>haarg@haarg.orgE<gt>
+
 =head1 COPYRIGHT
 
     Copyright (c) 2008 Yuval Kogman. All rights reserved
