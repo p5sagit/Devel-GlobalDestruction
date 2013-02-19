@@ -84,8 +84,8 @@ aliased, etc. if L<Sub::Exporter> is present.
 =item in_global_destruction
 
 Returns true if the interpreter is in global destruction. In perl 5.14+, this
-returns C<${^GLOBAL_PHASE} eq 'DESTRUCT'>, and on earlier perls, it returns the
-current value of C<PL_dirty>.
+returns C<${^GLOBAL_PHASE} eq 'DESTRUCT'>, and on earlier perls, detects it using
+the value of C<PL_main_start> or C<PL_dirty>.
 
 =back
 
