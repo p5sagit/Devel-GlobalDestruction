@@ -19,8 +19,8 @@ if (defined ${^GLOBAL_PHASE}) {
 # try to load the xs version if it was compiled
 #
 elsif (eval {
-  require XSLoader;
-  XSLoader::load(__PACKAGE__, $VERSION);
+  require Devel::GlobalDestruction::XS;
+  *in_global_destruction = \&Devel::GlobalDestruction::XS::in_global_destruction;
   1;
 }) {
   # the eval already installed everything, nothing to do

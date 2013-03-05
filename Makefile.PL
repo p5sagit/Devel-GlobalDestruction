@@ -26,6 +26,10 @@ my %META_BITS = (
 );
 my %RUN_DEPS = (
   'Sub::Exporter::Progressive' => 0.001002,
+  ( (defined ${^GLOBAL_PHASE} or !can_xs() )
+    ? ()
+    : ('Devel::GlobalDestruction::XS' => 0)
+  ),
 );
 
 my %WriteMakefileArgs = (
@@ -46,10 +50,6 @@ my %WriteMakefileArgs = (
     requires => \%RUN_DEPS,
   },
   ($mymeta and !$mymeta_works) ? ( 'NO_MYMETA' => 1 ) : (),
-  ( (defined ${^GLOBAL_PHASE} or !can_xs() )
-    ? (XS => {}, C => [])
-    : ()
-  ),
 );
 
 unless ( eval { ExtUtils::MakeMaker->VERSION('6.56') } ) {
