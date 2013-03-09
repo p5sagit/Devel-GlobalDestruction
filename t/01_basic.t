@@ -21,25 +21,31 @@ our $had_error;
 
 # try to ensure this is the last-most END so we capture future tests
 # running in other ENDs
-require B;
-my $reinject_retries = my $max_retry = 5;
-my $end_worker;
-$end_worker = sub {
-  my $tail = (B::end_av()->ARRAY)[-1];
-  if (!defined $tail or $tail == $end_worker) {
-    $? = $had_error || 0;
-    $reinject_retries = 0;
-  }
-  elsif ($reinject_retries--) {
-    push @{B::end_av()->object_2svref}, $end_worker;
-  }
-  else {
-    print STDERR "\n\nSomething is racing with @{[__FILE__]} for final END block definition - can't win after $max_retry iterations :(\n\n";
-    require POSIX;
-    POSIX::_exit( 255 );
-  }
-};
-END { push @{B::end_av()->object_2svref}, $end_worker }
+if ($[ >= 5.008) {
+  require B;
+  my $reinject_retries = my $max_retry = 5;
+  my $end_worker;
+  $end_worker = sub {
+    my $tail = (B::end_av()->ARRAY)[-1];
+    if (!defined $tail or $tail == $end_worker) {
+      $? = $had_error || 0;
+      $reinject_retries = 0;
+    }
+    elsif ($reinject_retries--) {
+      push @{B::end_av()->object_2svref}, $end_worker;
+    }
+    else {
+      print STDERR "\n\nSomething is racing with @{[__FILE__]} for final END block definition - can't win after $max_retry iterations :(\n\n";
+      require POSIX;
+      POSIX::_exit( 255 );
+    }
+  };
+  eval 'END { push @{B::end_av()->object_2svref}, $end_worker }';
+}
+# B::end_av isn't available on 5.6, so just use a basic end block
+else {
+  eval 'END { $? = $had_error || 0 }';
+}
 
 sub ok ($$) {
   $had_error++, print "not " if !$_[0];
@@ -62,7 +68,8 @@ ok( prototype \&in_global_destruction eq "", "empty prototype" );
 
 ok( ! in_global_destruction(), "Runtime is not GD" );
 
-our $sg1 = Test::Scope::Guard->new(sub { ok( in_global_destruction(), "Final cleanup object destruction properly in GD" ) });
+our $sg1;
+$sg1 = Test::Scope::Guard->new(sub { ok( in_global_destruction(), "Final cleanup object destruction properly in GD" ) });
 
 END {
   ok( ! in_global_destruction(), 'Not yet in GD while in END block 1' )

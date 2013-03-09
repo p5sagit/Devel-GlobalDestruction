@@ -20,6 +20,7 @@ if (defined ${^GLOBAL_PHASE}) {
 #
 elsif (eval {
   require Devel::GlobalDestruction::XS;
+  no warnings 'once';
   *in_global_destruction = \&Devel::GlobalDestruction::XS::in_global_destruction;
   1;
 }) {
@@ -32,10 +33,11 @@ else {
   require B;
   my $started = !B::main_start()->isa(q[B::NULL]);
   unless ($started) {
-    eval 'CHECK { $started = 1 }; 1'
+    # work around 5.6 eval bug
+    eval '0 && $started; CHECK { $started = 1 }; 1'
       or die $@;
   }
-  eval 'sub in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
+  eval '0 && $started; sub in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
     or die $@;
 }
 

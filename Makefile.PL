@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-require 5.008001;
+require 5.006;
 
 use ExtUtils::MakeMaker;
 BEGIN { if ( $^O eq 'cygwin' ) {
@@ -25,7 +25,7 @@ my $mymeta = $mymeta_works || eval { ExtUtils::MakeMaker->VERSION('6.5702'); 1 }
 my %META_BITS = (
 );
 my %RUN_DEPS = (
-  'Sub::Exporter::Progressive' => 0.001002,
+  'Sub::Exporter::Progressive' => '0.001002',
   ( (defined ${^GLOBAL_PHASE} or !can_xs() )
     ? ()
     : ('Devel::GlobalDestruction::XS' => 0)
@@ -38,7 +38,7 @@ my %WriteMakefileArgs = (
   LICENSE             => 'perl',
   INSTALLDIRS         => 'site',
   PL_FILES            => { },
-  MIN_PERL_VERSION    => '5.008001',
+  MIN_PERL_VERSION    => '5.006',
   PREREQ_PM           => \%RUN_DEPS,
   CONFIGURE_REQUIRES  => { 'ExtUtils::CBuilder' => 0.27 },
   META_ADD => {

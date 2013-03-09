@@ -3,7 +3,6 @@ use warnings;
 use FindBin qw($Bin);
 use Config;
 use IPC::Open2;
-use File::Glob 'bsd_glob'; # support spaces in names unlike glob()
 
 # rerun the tests under the assumption of pure-perl
 
@@ -13,7 +12,8 @@ $ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST} = 1;
 
 my $this_file = quotemeta(__FILE__);
 
-my @tests = grep { $_ !~ /${this_file}$/ } bsd_glob("$Bin/*.t");
+opendir(my $dh, $Bin);
+my @tests = grep { $_ !~ /${this_file}$/ } map { "$Bin/$_" } grep { /\.t$/ } readdir $dh;
 print "1..@{[ scalar @tests ]}\n";
 
 my $had_error = 0;
