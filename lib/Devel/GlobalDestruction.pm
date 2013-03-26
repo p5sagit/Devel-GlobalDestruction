@@ -3,7 +3,7 @@ package Devel::GlobalDestruction;
 use strict;
 use warnings;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use Sub::Exporter::Progressive -setup => {
   exports => [ qw(in_global_destruction) ],
@@ -48,8 +48,8 @@ __END__
 
 =head1 NAME
 
-Devel::GlobalDestruction - Expose the flag which marks global
-destruction.
+Devel::GlobalDestruction - Provides function returning the equivalent of
+C<${^GLOBAL_PHASE} eq 'DESTRUCT'> for older perls.
 
 =head1 SYNOPSIS
 

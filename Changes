@@ -1,4 +1,9 @@
+0.10  Tue, 26 Mar 2013
+  * Rewrite pure-perl implementation in terms of B::main_start
+    (greatly simplifies code)
   * Fix pure-perl behavior under $^C (RT#78619))
+  * Separate XS portion into a compiler-optional dependency
+    Devel::GlobalDestruction::XS
 
 0.09  Wed, 08 Aug 2012
   * Rewrite completely broken pure-perl GD detection under threads
