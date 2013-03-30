@@ -65,6 +65,21 @@ unless ( eval { ExtUtils::MakeMaker->VERSION('6.56') } ) {
   }
 }
 
+if (eval { require Devel::GlobalDestruction }
+    && Devel::GlobalDestruction->VERSION < 0.10) {
+  package MY;
+  no warnings 'once';
+
+  *install = sub {
+    my $self = shift;
+    return '
+pure_site_install ::
+	$(NOECHO) $(RM_F) ' . $self->quote_literal(
+      $self->catfile('$(DESTINSTALLSITEARCH)', 'Devel', 'GlobalDestruction.pm')
+    ) . "\n" . $self->SUPER::install;
+  };
+}
+
 delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
   unless eval { ExtUtils::MakeMaker->VERSION('6.52') };
 
