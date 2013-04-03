@@ -21,7 +21,7 @@ our $had_error;
 
 # try to ensure this is the last-most END so we capture future tests
 # running in other ENDs
-if ($[ >= 5.008) {
+if ($] >= 5.008) {
   require B;
   my $reinject_retries = my $max_retry = 5;
   my $end_worker;
