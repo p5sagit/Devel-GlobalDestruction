@@ -19,6 +19,15 @@ BEGIN { if ( $^O eq 'cygwin' ) {
   }
 }}
 
+my $pureperl;
+for my $i (0..$#ARGV) {
+  if ($ARGV[$i] =~ /^PUREPERL_ONLY=(.*)/) {
+    $pureperl = $1;
+    splice @ARGV, $i, 1;
+    last;
+  }
+}
+
 my $mymeta_works = eval { ExtUtils::MakeMaker->VERSION('6.5707'); 1 };
 my $mymeta = $mymeta_works || eval { ExtUtils::MakeMaker->VERSION('6.5702'); 1 };
 
@@ -26,7 +35,7 @@ my %META_BITS = (
 );
 my %RUN_DEPS = (
   'Sub::Exporter::Progressive' => '0.001006',
-  ( (defined ${^GLOBAL_PHASE} or !can_xs() )
+  ( (defined ${^GLOBAL_PHASE} or $pureperl or !can_xs() )
     ? ()
     : ('Devel::GlobalDestruction::XS' => 0)
   ),
