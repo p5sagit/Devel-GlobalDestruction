@@ -27,17 +27,11 @@ elsif (eval {
   # the eval already installed everything, nothing to do
 }
 else {
-  # internally, PL_main_start is nulled immediately before entering global destruction
-  # and we can use B to detect that.  It will also be null before the main runloop starts,
-  # so we check install a CHECK if needed to detect that.
+  # internally, PL_main_cv is set to Nullcv immediately before entering
+  # global destruction and we can use B to detect that.  B::main_cv will
+  # only ever be a B::CV or a B::SPECIAL that is a reference to 0
   require B;
-  my $started = !B::main_start()->isa(q[B::NULL]);
-  unless ($started) {
-    # work around 5.6 eval bug
-    eval '0 && $started; CHECK { $started = 1 }; 1'
-      or die $@;
-  }
-  eval '0 && $started; sub in_global_destruction () { $started && B::main_start()->isa(q[B::NULL]) }; 1'
+  eval 'sub in_global_destruction () { ${B::main_cv()} == 0 }; 1'
     or die $@;
 }
 
@@ -87,7 +81,7 @@ aliased, etc. if L<Sub::Exporter> is present.
 
 Returns true if the interpreter is in global destruction. In perl 5.14+, this
 returns C<${^GLOBAL_PHASE} eq 'DESTRUCT'>, and on earlier perls, detects it using
-the value of C<PL_main_start> or C<PL_dirty>.
+the value of C<PL_main_cv> or C<PL_dirty>.
 
 =back
 
