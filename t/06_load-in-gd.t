@@ -15,12 +15,22 @@ BEGIN {
   sub DESTROY { my $self = shift; $self->[0]->() }
 }
 
-print "1..1\n";
+use POSIX qw(_exit);
+
+# doesn't always work when loaded in gd, so pre-load it
+use Sub::Exporter::Progressive ();
+
+$|++;
+print "1..3\n";
 
 our $alive = Test::Scope::Guard->new(sub {
   require Devel::GlobalDestruction;
   my $gd = Devel::GlobalDestruction::in_global_destruction();
-  print(($gd ? '' : 'not ') . "ok 1 - global destruct detected when loaded during GD\n");
-  exit($gd ? 0 : 1);
+  print(($gd ? '' : 'not ') . "ok 3 - global destruct detected when loaded during GD\n");
+  _exit($gd ? 0 : 1);
 });
 
+print(($alive ? '' : 'not ') . "ok 1 - alive during runtime\n");
+END {
+  print(($alive ? '' : 'not ') . "ok 2 - alive during END\n");
+}
