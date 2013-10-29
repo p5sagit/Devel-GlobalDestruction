@@ -17,9 +17,6 @@ BEGIN {
 
 use POSIX qw(_exit);
 
-# doesn't always work when loaded in gd, so pre-load it
-use Sub::Exporter::Progressive ();
-
 $|++;
 print "1..3\n";
 
