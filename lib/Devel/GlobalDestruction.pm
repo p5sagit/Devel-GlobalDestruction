@@ -3,7 +3,7 @@ package Devel::GlobalDestruction;
 use strict;
 use warnings;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 use Sub::Exporter::Progressive -setup => {
   exports => [ qw(in_global_destruction) ],

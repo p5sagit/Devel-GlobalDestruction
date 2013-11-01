@@ -1,4 +1,4 @@
-0.12
+0.12  Fri, 01 Nov 2013
   * Fix detection when loaded during global destruction by checking B::main_cv
     instead of B::main_start
   * Bump Sub::Exporter::Progressive dependency to fix loading in global
