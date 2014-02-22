@@ -1,20 +1,6 @@
+use t::threads_check;
 use strict;
 use warnings;
-
-use Config;
-BEGIN {
-  unless ($Config{useithreads}) {
-    print "1..0 # SKIP your perl does not support ithreads\n";
-    exit 0;
-  }
-}
-
-BEGIN {
-  unless (eval { require threads }) {
-    print "1..0 # SKIP threads.pm not installed\n";
-    exit 0;
-  }
-}
 
 BEGIN {
   if ($ENV{DEVEL_GLOBALDESTRUCTION_PP_TEST}) {
