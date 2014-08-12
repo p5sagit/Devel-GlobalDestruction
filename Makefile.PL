@@ -1,7 +1,48 @@
 use strict;
-use warnings;
+use warnings FATAL => 'all';
+use 5.006;
 
-require 5.006;
+my %META = (
+  name => 'Devel-GlobalDestruction',
+  license => 'perl_5',
+  prereqs => {
+    configure => { requires => {
+      'ExtUtils::MakeMaker'   => 0,
+      'ExtUtils::CBuilder'    => 0.27,
+    } },
+    runtime => {
+      requires => {
+        'Sub::Exporter::Progressive' => '0.001011',
+        'perl'                      => 5.006,
+      },
+    },
+  },
+  resources => {
+    homepage => 'https://metacpan.org/release/Devel-GlobalDestruction',
+    repository => {
+      url => 'git://git.shadowcat.co.uk/p5sagit/Devel-GlobalDestruction.git',
+      web => 'http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=p5sagit/Devel-GlobalDestruction.git',
+      type => 'git',
+    },
+    bugtracker => {
+      web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Devel-GlobalDestruction',
+      mailto => 'bug-Devel-GlobalDestruction@rt.cpan.org',
+    },
+    license => [ 'http://dev.perl.org/licenses/' ],
+  },
+  no_index => {
+    directory => [ 't', 'xt' ]
+  },
+);
+
+my %MM_ARGS = (
+  PREREQ_PM => {
+    ( (defined ${^GLOBAL_PHASE} or parse_args()->{PUREPERL_ONLY} or !can_xs() )
+      ? ()
+      : ('Devel::GlobalDestruction::XS' => 0)
+    ),
+  },
+);
 
 use ExtUtils::MakeMaker;
 BEGIN { if ( $^O eq 'cygwin' ) {
@@ -31,52 +72,6 @@ sub parse_args {
   return $tmp->{ARGS} || {};
 }
 
-my $mymeta_works = eval { ExtUtils::MakeMaker->VERSION('6.5707'); 1 };
-my $mymeta = $mymeta_works || eval { ExtUtils::MakeMaker->VERSION('6.5702'); 1 };
-
-my %META_BITS = (
-);
-my %RUN_DEPS = (
-  'Sub::Exporter::Progressive' => '0.001011',
-  ( (defined ${^GLOBAL_PHASE} or parse_args()->{PUREPERL_ONLY} or !can_xs() )
-    ? ()
-    : ('Devel::GlobalDestruction::XS' => 0)
-  ),
-);
-
-my %WriteMakefileArgs = (
-  NAME                => 'Devel::GlobalDestruction',
-  VERSION_FROM        => 'lib/Devel/GlobalDestruction.pm',
-  LICENSE             => 'perl',
-  INSTALLDIRS         => 'site',
-  PL_FILES            => { },
-  MIN_PERL_VERSION    => '5.006',
-  PREREQ_PM           => \%RUN_DEPS,
-  CONFIGURE_REQUIRES  => { 'ExtUtils::CBuilder' => 0.27 },
-  META_ADD => {
-    resources => {
-      homepage => 'http://search.cpan.org/dist/Devel-GlobalDestruction',
-      repository => 'git://git.shadowcat.co.uk/p5sagit/Devel-GlobalDestruction.git',
-      bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=Devel-GlobalDestruction',
-    },
-    requires => \%RUN_DEPS,
-  },
-  ($mymeta and !$mymeta_works) ? ( 'NO_MYMETA' => 1 ) : (),
-);
-
-unless ( eval { ExtUtils::MakeMaker->VERSION('6.56') } ) {
-  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
-  my $pp = $WriteMakefileArgs{PREREQ_PM};
-  for my $mod ( keys %$br ) {
-    if ( exists $pp->{$mod} ) {
-      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
-    }
-    else {
-      $pp->{$mod} = $br->{$mod};
-    }
-  }
-}
-
 if (eval { require Devel::GlobalDestruction }
     && Devel::GlobalDestruction->VERSION < 0.10) {
   package MY;
@@ -91,11 +86,6 @@ pure_site_install ::
     ) . "\n" . $self->SUPER::install;
   };
 }
-
-delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
-  unless eval { ExtUtils::MakeMaker->VERSION('6.52') };
-
-WriteMakefile(%WriteMakefileArgs);
 
 # can we locate a (the) C compiler
 sub can_cc {
@@ -195,3 +185,43 @@ END_C
 
   return $result;
 }
+
+##############################################################################
+require ExtUtils::MakeMaker;
+(do 'maint/Makefile.PL.include' or die $@) unless -f 'META.yml';
+
+# have to do this since old EUMM dev releases miss the eval $VERSION line
+my $eumm_version  = eval $ExtUtils::MakeMaker::VERSION;
+my $mymeta        = $eumm_version >= 6.57_02;
+my $mymeta_broken = $mymeta && $eumm_version < 6.57_07;
+
+($MM_ARGS{NAME} = $META{name}) =~ s/-/::/g;
+($MM_ARGS{VERSION_FROM} = "lib/$MM_ARGS{NAME}.pm") =~ s{::}{/}g;
+$MM_ARGS{LICENSE} = $META{license}
+  if $eumm_version >= 6.30;
+$MM_ARGS{NO_MYMETA} = 1
+  if $mymeta_broken;
+$MM_ARGS{META_ADD} = { 'meta-spec' => { version => 2 }, %META }
+  unless -f 'META.yml';
+
+for (qw(configure build test runtime)) {
+  my $key = $_ eq 'runtime' ? 'PREREQ_PM' : uc $_.'_REQUIRES';
+  my $r = $MM_ARGS{$key} = {
+    %{$META{prereqs}{$_}{requires} || {}},
+    %{delete $MM_ARGS{$key} || {}},
+  };
+  defined $r->{$_} or delete $r->{$_} for keys %$r;
+}
+
+$MM_ARGS{MIN_PERL_VERSION} = delete $MM_ARGS{PREREQ_PM}{perl} || 0;
+
+delete $MM_ARGS{MIN_PERL_VERSION}
+  if $eumm_version < 6.47_01;
+$MM_ARGS{BUILD_REQUIRES} = {%{$MM_ARGS{BUILD_REQUIRES}}, %{delete $MM_ARGS{TEST_REQUIRES}}}
+  if $eumm_version < 6.63_03;
+$MM_ARGS{PREREQ_PM} = {%{$MM_ARGS{PREREQ_PM}}, %{delete $MM_ARGS{BUILD_REQUIRES}}}
+  if $eumm_version < 6.55_01;
+delete $MM_ARGS{CONFIGURE_REQUIRES}
+  if $eumm_version < 6.51_03;
+
+ExtUtils::MakeMaker::WriteMakefile(%MM_ARGS);
