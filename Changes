@@ -1,3 +1,7 @@
+
+  * include README
+  * include minimum perl version 5.6 in metadata
+
 0.12  Fri, 01 Nov 2013
   * Fix detection when loaded during global destruction by checking B::main_cv
     instead of B::main_start
