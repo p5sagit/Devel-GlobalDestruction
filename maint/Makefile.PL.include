@@ -11,7 +11,7 @@ author [
   'Peter Rabbitson <ribasushi@cpan.org>',
   'Arthur Axel \'fREW\' Schmidt <frioux@gmail.com>',
   'Elizabeth Mattijsen <liz@dijkmat.nl>',
-  'Greham Knop <haarg@haarg.org>',
+  'Graham Knop <haarg@haarg.org>',
 ];
 
 1;
