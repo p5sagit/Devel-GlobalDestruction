@@ -25,7 +25,12 @@ sub import {
     _skip "threads.pm not installed";
   }
   elsif (system "$^X", '-Mt::threads_check=create') {
-    print STDERR "# threads appear broken on this machine\n";
+    print STDERR <<'END'
+#############################################################################
+# Threads appear broken on this machine.
+# Subsequent test will likely FAIL, due to your environment.
+#############################################################################
+END
   }
 }
 
