@@ -41,8 +41,8 @@ sub do_test {
     die "Argument passing failed!";
   }
 
-  delete $INC{'t/01_basic.t'};
-  do 't/01_basic.t';
+  delete $INC{'./t/01_basic.t'};
+  do './t/01_basic.t';
 
   1;
 }
