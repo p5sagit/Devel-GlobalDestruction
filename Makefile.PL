@@ -11,7 +11,6 @@ my %META = (
   prereqs => {
     configure => { requires => {
       'ExtUtils::MakeMaker'   => 0,
-      'ExtUtils::CBuilder'    => 0.27,
     } },
     runtime => {
       requires => {
