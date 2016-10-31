@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 use 5.006;
 use lib 'inc';
 use ExtUtils::HasCompiler qw(can_compile_loadable_object);
+use ExtUtils::MakeMaker;
 
 my %META = (
   name => 'Devel-GlobalDestruction',
