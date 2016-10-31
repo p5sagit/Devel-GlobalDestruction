@@ -1,3 +1,7 @@
+Revision history for Devel-GlobalDestruction
+
+  - stop relying on . being in @INC
+  - switch to ExtUtils::HasCompiler to detect presence of a compiler
 
 0.13 - 2014-08-16
   * include README
